@@ -1,10 +1,11 @@
+"use strict"
 // An inventory app for a grocery store
 
 /* TODOs: 
 - Handle space delimitation on top of comma delimited
 - Handle warning on low stock
 - Handle alert if out of stock
-- Disallow users to buy more than there is stock
+∙ Disallow users to buy more than there is stock
 - Load the Rules prompt only when user asks for it.
 - Implement store opening hours and closing hours.
 */
@@ -52,6 +53,12 @@ function buildPrompt (userAction) {
 
         // Item Count
         promptString += (store[i][1] + "\n");
+        if(store[i][1] < 2) {
+            promptString = "W A R N I N G, " + store[i][0] + "'s are running low.\n";
+        }
+        else if(store[i][1] == 0) {
+            promptString = "W A R N I N G, we are out of " + store[i][0] + "'s!!\n";
+        }
     }
 
     console.log(promptString);
@@ -74,8 +81,15 @@ function processUserInput (userInput) {
         return storeOperations(buildPrompt("We didn't get anything that time. Please try again.\n If you would like to quit just enter 'quit'"));
     }
 
+    // if user needs menu 
+    if(userInput === "menu") {
+        return storeOperations(buildPrompt("menu"));
+    }
+
     // break down string into an array
-    userInput = userInput.split(',');
+    //userInput = userInput.split(',');
+    //userInput = userInput.split(',' || ' ');
+    userInput = userInput.split(' ');
     
     // Sanitize userInput of white space
     for(var i = 0; i < userInput.length; i ++) {
@@ -94,9 +108,15 @@ function processUserInput (userInput) {
             
             //2. action: (buy)
             if(action === "buy") {
+                // if store has less than customer is asking
+                if(store[j][1] < count) {
+                    return storeOperations(buildPrompt("The store doesn't have enough to fill your order."));
+                }
                 //3. Add count to inventory
+                else {
                 store[j][1] -= count;
                 return storeOperations(buildPrompt("You bought " + count + " " + item));
+                }
 
             } 
 

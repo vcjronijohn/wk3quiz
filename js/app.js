@@ -3,8 +3,8 @@
 
 /* TODOs: 
 - Handle space delimitation on top of comma delimited
-- Handle warning on low stock
-- Handle alert if out of stock
+∙ Handle warning on low stock
+∙ Handle alert if out of stock
 ∙ Disallow users to buy more than there is stock
 - Load the Rules prompt only when user asks for it.
 - Implement store opening hours and closing hours.
@@ -53,16 +53,20 @@ function buildPrompt (userAction) {
 
         // Item Count
         promptString += (store[i][1] + "\n");
-        if(store[i][1] < 2) {
-            promptString = "W A R N I N G, " + store[i][0] + "'s are running low.\n";
+        
+        // warning if anything is low or out of stock
+        if(store[i][1] == 0) {
+            promptString += "W A R N I N G, we are out of " + store[i][0] + "'s!!\n";
         }
-        else if(store[i][1] == 0) {
-            promptString = "W A R N I N G, we are out of " + store[i][0] + "'s!!\n";
+        else if(store[i][1] < 2) {
+            promptString += "W A R N I N G, " + store[i][0] + "'s are running low.\n";
         }
+       
     }
 
     console.log(promptString);
     return promptString;
+    
 }
 
 
@@ -83,7 +87,7 @@ function processUserInput (userInput) {
 
     // if user needs menu 
     if(userInput === "menu") {
-        return storeOperations(buildPrompt("menu"));
+        return storeOperations(buildPrompt());
     }
 
     // break down string into an array
@@ -102,7 +106,7 @@ function processUserInput (userInput) {
 
     // Update Inventory
     for(var j = 0; j < store.length; j++) {
-
+   
         // Matches User Input to item in store
         if(item === store[j][0]) {
             

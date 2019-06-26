@@ -2,12 +2,12 @@
 // An inventory app for a grocery store
 
 /* TODOs: 
-- Handle space delimitation on top of comma delimited
+∙ Handle space delimitation on top of comma delimited
 ∙ Handle warning on low stock
 ∙ Handle alert if out of stock
 ∙ Disallow users to buy more than there is stock
-- Load the Rules prompt only when user asks for it.
-- Implement store opening hours and closing hours.
+∙ Load the Rules prompt only when user asks for it.
+∙ Implement store opening hours and closing hours.
 */
 
 // default inventory
@@ -26,7 +26,22 @@ storeOperations(buildPrompt());
 function storeOperations (promptString) {
     var userInput = prompt(promptString);
 
+    // Get today's date
+const today = new Date();
+const hour = new Date();
+
+// Check to see if the store is open
+if (today.getDay() === 0) {
+  console.log("Sorry, the store is closed.");
+} else if(hour.getHours() < 9 || hour.getHours() > 21) {
+    console.log("Sorry, the store is closed.");
+}  
+  else {
     return processUserInput(userInput);
+
+  }
+
+ //   return processUserInput(userInput);
 }
 
 // - build prompt function
@@ -39,6 +54,7 @@ function buildPrompt (userAction) {
         promptString += userAction + "\n";
     } else {
         promptString += "Welcome to our store!\n";
+        promptString += "Open Mon-Sat 9am-9pm\n";
     }
 
     promptString += "-------\nRULES\ncomma separated\n1. actions: stock/buy \n2. quantity\n3. item\nexample: buy, 5, guavas\n-------\n";
@@ -54,7 +70,7 @@ function buildPrompt (userAction) {
         // Item Count
         promptString += (store[i][1] + "\n");
         
-        // warning if anything is low or out of stock
+        // warning if anything is running low or out of stock
         if(store[i][1] == 0) {
             promptString += "W A R N I N G, we are out of " + store[i][0] + "'s!!\n";
         }
@@ -91,9 +107,10 @@ function processUserInput (userInput) {
     }
 
     // break down string into an array
-    //userInput = userInput.split(',');
-    //userInput = userInput.split(',' || ' ');
-    userInput = userInput.split(' ');
+   // userInput = userInput.split(', ');
+    userInput = userInput.split(/[\s, ]+/);
+
+
     
     // Sanitize userInput of white space
     for(var i = 0; i < userInput.length; i ++) {
